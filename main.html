@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tip Calculator - Japanese Aesthetic</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:wght@400;600&display=swap');
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Crimson Text', serif;
+      background-image: url("europeana-5TK1F5VfdIk-unsplash.jpg");
+      background-size: cover;
+      color: #e0e0e0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+      padding: 20px;
+    }
+    
+    /* Improved background with better sakura animation */
+    .background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -1;
+      overflow: hidden;
+    }
+    
+    .sakura {
+      position: absolute;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Cpath fill='%23ffb7c5' d='M30,5 C30,5 40,20 50,20 C60,20 55,30 55,30 C55,30 60,40 50,40 C40,40 30,55 30,55 C30,55 20,40 10,40 C0,40 5,30 5,30 C5,30 0,20 10,20 C20,20 30,5 30,5 Z'/%3E%3Ccircle cx='30' cy='30' r='7' fill='%23ff8fa3'/%3E%3C/svg%3E");
+      background-size: 100% 100%;
+      pointer-events: none;
+      opacity: 0;
+      animation: fall 8s linear forwards;
+    }
+    
+    @keyframes fall {
+      0% {
+        opacity: 0;
+        transform: translateY(-10vh) rotate(0deg);
+      }
+      10% {
+        opacity: 0.8;
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(100vh) rotate(360deg);
+      }
+    }
+    
+    .pattern {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg stroke='%23a91b0d' stroke-width='1' stroke-opacity='0.15'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.1;
+    }
+    
+    .container {
+      max-width: 450px;
+      width: 100%;
+      padding: 2rem;
+      position: relative;
+      background: rgba(20, 20, 20, 0.8);
+      backdrop-filter: blur(10px);
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+      border: 1px solid rgba(180, 151, 90, 0.4);
+      overflow: hidden;
+      transform: translateZ(0);
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, #a91b0d, #d4af37, #a91b0d);
+    }
+    
+    .container::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.5), transparent);
+    }
+    
+    h1 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-weight: 600;
+      color: #d4af37;
+      position: relative;
+      padding-bottom: 1rem;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    h1::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 25%;
+      width: 50%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #a91b0d, transparent);
+    }
+    
+    .form-group {
+      margin-bottom: 1.2rem;
+      position: relative;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+      color: #d4af37;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
+    }
+    
+    input {
+      width: 100%;
+      padding: 0.8rem;
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      background: rgba(30, 30, 30, 0.7);
+      border-radius: 4px;
+      font-family: 'Crimson Text', serif;
+      font-size: 1rem;
+      color: #e0e0e0;
+      transition: all 0.3s ease;
+    }
+    
+    input:focus {
+      outline: none;
+      border-color: #a91b0d;
+      box-shadow: 0 0 8px rgba(169, 27, 13, 0.4);
+    }
+    
+    button {
+      display: block;
+      width: 100%;
+      padding: 0.8rem;
+      background: linear-gradient(135deg, #a91b0d, #800000);
+      color: #f5f5f5;
+      border: 1px solid rgba(212, 175, 55, 0.5);
+      border-radius: 4px;
+      font-family: 'Crimson Text', serif;
+      font-size: 1.1rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 1.5rem;
+      letter-spacing: 1px;
+      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    button::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+      transform: rotate(45deg);
+      transition: all 0.5s ease;
+      opacity: 0;
+    }
+    
+    button:hover {
+      background: linear-gradient(135deg, #800000, #a91b0d);
+      box-shadow: 0 4px 12px rgba(169, 27, 13, 0.4);
+    }
+    
+    button:hover::after {
+      opacity: 1;
+      left: 100%;
+    }
+    
+    button:active {
+      transform: translateY(2px);
+    }
+    
+    .result {
+      margin-top: 1.5rem;
+      padding: 1.2rem;
+      background: rgba(30, 30, 30, 0.6);
+      border-radius: 4px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.5s ease;
+      border: 1px solid rgba(212, 175, 55, 0.2);
+    }
+    
+    .result.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .amount {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: #d4af37;
+      margin: 0.5rem 0;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    }
+    
+    .footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: 0.9rem;
+      color: #a0a0a0;
+      position: relative;
+      padding-top: 1rem;
+    }
+    
+    .footer::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 35%;
+      width: 30%;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.3), transparent);
+    }
+    
+    /* Social icons */
+    .social-icons {
+      display: flex;
+      justify-content: center;
+      margin-top: 0.8rem;
+      gap: 1rem;
+    }
+    
+    .social-icon {
+      color: #d4af37;
+      font-size: 1.2rem;
+      opacity: 0.8;
+      transition: all 0.3s ease;
+    }
+    
+    .social-icon:hover {
+      opacity: 1;
+      transform: scale(1.1);
+    }
+    
+    /* Animated Yoichi text */
+    .yoichi-container {
+      display: inline-block;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .yoichi {
+      font-weight: 600;
+      color: #d4af37;
+      letter-spacing: 2px;
+      display: inline-block;
+      position: relative;
+    }
+    
+    .yoichi .letter {
+      display: inline-block;
+      transform: translateY(100%);
+      opacity: 0;
+      animation: revealLetter 1.2s forwards;
+    }
+    
+    @keyframes revealLetter {
+      0% {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+      100% {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    /* Dynamic glowing effects for decorative elements */
+    .decorative-element {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='%23d4af37' d='M12,0 L14.5,9.5 L24,12 L14.5,14.5 L12,24 L9.5,14.5 L0,12 L9.5,9.5 Z'/%3E%3C/svg%3E");
+      opacity: 0.3;
+      animation: pulse 4s infinite alternate;
+    }
+    
+    @keyframes pulse {
+      0% {
+        opacity: 0.2;
+        transform: scale(0.95);
+      }
+      100% {
+        opacity: 0.4;
+        transform: scale(1.05);
+      }
+    }
+
+    .top-right {
+      top: 10px;
+      right: 10px;
+    }
+
+    .top-left {
+      top: 10px;
+      left: 10px;
+    }
+
+    .bottom-left {
+      bottom: 10px;
+      left: 10px;
+    }
+
+    .bottom-right {
+      bottom: 10px;
+      right: 10px;
+    }
+
+    /* Loading animation */
+    .loading {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #0a0a0a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      transition: opacity 0.8s ease, visibility 0.8s;
+      flex-direction: column;
+    }
+    
+    .loading.hide {
+      opacity: 0;
+      visibility: hidden;
+    }
+    
+    .loading-logo {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: #d4af37;
+      letter-spacing: 6px;
+      position: relative;
+      margin-bottom: 3rem;
+    }
+    
+    .loading-bar {
+      width: 200px;
+      height: 2px;
+      background: rgba(212, 175, 55, 0.2);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .loading-bar::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #800000, #d4af37);
+      animation: loadingBar 2s ease forwards;
+    }
+    
+    @keyframes loadingBar {
+      0% {
+        width: 0;
+      }
+      100% {
+        width: 100%;
+      }
+    }
+    
+    /* Anime character logo */
+    .anime-logo {
+      position: relative;
+      width: 120px;
+      height: 120px;
+      margin-bottom: 1rem;
+    }
+    
+    .anime-logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      animation: fadeIn 1s ease;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      .container {
+        padding: 1.5rem;
+      }
+      
+      h1 {
+        font-size: 1.5rem;
+      }
+      
+      .amount {
+        font-size: 1.5rem;
+      }
+    }
+    
+    @media (max-width: 400px) {
+      .container {
+        padding: 1.2rem;
+      }
+      
+      input, button {
+        padding: 0.7rem;
+      }
+      
+      .loading-logo {
+        font-size: 2rem;
+      }
+    }
+    
+    @media (max-height: 700px) {
+      .container {
+        padding: 1.2rem;
+      }
+      
+      .form-group {
+        margin-bottom: 1rem;
+      }
+      
+      h1 {
+        margin-bottom: 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Loading screen -->
+  <div class="loading" id="loading">
+    <div class="anime-logo">
+      <!-- Anime SVG character -->
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120">
+        <!-- Hair -->
+        <path d="M60,20 C35,20 25,40 25,60 C25,75 35,90 60,90 C85,90 95,75 95,60 C95,40 85,20 60,20 Z" fill="#1a1a1a"/>
+        <!-- Face -->
+        <ellipse cx="60" cy="55" rx="25" ry="30" fill="#ffdbac"/>
+        <!-- Eyes -->
+        <ellipse cx="50" cy="50" rx="5" ry="7" fill="#1a1a1a"/>
+        <ellipse cx="70" cy="50" rx="5" ry="7" fill="#1a1a1a"/>
+        <!-- Highlighted Eyes -->
+        <ellipse cx="48" cy="48" rx="2" ry="2" fill="#ffffff"/>
+        <ellipse cx="68" cy="48" rx="2" ry="2" fill="#ffffff"/>
+        <!-- Mouth -->
+        <path d="M55,65 C58,68 62,68 65,65" stroke="#1a1a1a" stroke-width="1.5" fill="none"/>
+        <!-- Hair highlights -->
+        <path d="M40,30 C45,25 55,20 60,20" stroke="#a91b0d" stroke-width="2" fill="none"/>
+        <path d="M80,30 C75,25 65,20 60,20" stroke="#a91b0d" stroke-width="2" fill="none"/>
+      </svg>
+    </div>
+    <div class="loading-logo">YOICHI</div>
+    <div class="loading-bar"></div>
+  </div>
+
+  <div class="background">
+    <div class="pattern"></div>
+    <!-- Sakura petals are generated by JS -->
+  </div>
+  
+  <div class="container">
+    <div class="decorative-element top-right"></div>
+    <div class="decorative-element top-left"></div>
+    <div class="decorative-element bottom-left"></div>
+    <div class="decorative-element bottom-right"></div>
+    
+    <h1>Tip Calculator</h1>
+    
+    <div class="form-group">
+      <label for="total">Total Bill (£)</label>
+      <input type="number" id="total" placeholder="e.g. 45.50" min="0" step="0.01">
+    </div>
+    
+    <div class="form-group">
+      <label for="tip">Tip Percentage (%)</label>
+      <input type="number" id="tip" placeholder="e.g. 10" min="0" max="100">
+    </div>
+    
+    <div class="form-group">
+      <label for="people">Number of People</label>
+      <input type="number" id="people" placeholder="e.g. 4" min="1">
+    </div>
+    
+    <button id="calculate">Calculate</button>
+    
+    <div class="result" id="result">
+      <p>Each person should pay:</p>
+      <div class="amount" id="amount">£0.00</div>
+    </div>
+    
+    <div class="footer">
+      Powered by 
+      <div class="yoichi-container">
+        <span class="yoichi" id="yoichi"></span>
+      </div>
+      <div class="social-icons">
+        <!-- GitHub icon -->
+        <a href="https://github.com/yoichi" target="_blank" class="social-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+          </svg>
+        </a>
+        <!-- Discord icon -->
+        <a href="#" class="social-icon" id="discord-link" title="yoichi_2377">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
+            <path d="M6 8.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z"></path>
+            <path d="M20 17.5v-1.5a2.5 2.5 0 0 0-2.5-2.5H15"></path>
+            <path d="M4 17.5v-1.5A2.5 2.5 0 0 1 6.5 13H9"></path>
+            <rect width="7" height="9" x="12" y="13" rx="1"></rect>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Loading animation
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        document.getElementById('loading').classList.add('hide');
+      }, 2500);
+    });
+    
+    // Create sakura petals
+    function createSakura() {
+      const background = document.querySelector('.background');
+      
+      function createPetal() {
+        const petal = document.createElement('div');
+        petal.classList.add('sakura');
+        
+        // Random size between 15px and 30px for more visible flowers
+        const size = Math.random() * 15 + 15;
+        petal.style.width = `${size}px`;
+        petal.style.height = `${size}px`;
+        
+        // Random position
+        const startPositionX = Math.random() * 100;
+        petal.style.left = `${startPositionX}%`;
+        petal.style.top = '-5%';
+        
+        // Random animation duration between 8s and 14s (slower to be more graceful)
+        const duration = Math.random() * 6 + 8;
+        petal.style.animationDuration = `${duration}s`;
+        
+        // Random horizontal movement
+        const xMovement = Math.random() * 100 - 50; // -50px to 50px for more drift
+        
+        // Apply custom transform to add horizontal drift and rotation
+        const keyframes = `
+          @keyframes fall-${startPositionX} {
+            0% {
+              opacity: 0;
+              transform: translate(0, -10vh) rotate(0deg);
+            }
+            10% {
+              opacity: 0.8;
+            }
+            50% {
+              transform: translate(${xMovement * 0.5}px, 50vh) rotate(180deg);
+            }
+            100% {
+              opacity: 0;
+              transform: translate(${xMovement}px, 100vh) rotate(360deg);
+            }
+          }
+        `;
+        
+        const styleSheet = document.createElement('style');
+        styleSheet.innerText = keyframes;
+        document.head.appendChild(styleSheet);
+        
+        petal.style.animationName = `fall-${startPositionX}`;
+        
+        background.appendChild(petal);
+        
+        // Remove petal after animation completes
+        setTimeout(() => {
+          petal.remove();
+          styleSheet.remove();
+        }, duration * 1000);
+      }
+      
+      // Create petals continuously but less frequently (every 300ms instead of 200ms)
+      setInterval(createPetal, 300);
+      
+      // Initial batch of petals
+      for (let i = 0; i < 12; i++) {
+        setTimeout(createPetal, i * 300);
+      }
+    }
+    
+    // Animated text reveal for Yoichi
+    function animateYoichi() {
+      const text = "Yoichi";
+      const container = document.getElementById('yoichi');
+      
+      container.innerHTML = '';
+      
+      for (let i = 0; i < text.length; i++) {
+        const span = document.createElement('span');
+        span.className = 'letter';
+        span.textContent = text[i];
+        span.style.animationDelay = `${0.1 * i}s`;
+        container.appendChild(span);
+      }
+    }
+    
+    // Discord username copy to clipboard functionality
+    document.getElementById('discord-link').addEventListener('click', function(e) {
+      e.preventDefault();
+      navigator.clipboard.writeText('yoichi_2377').then(function() {
+        alert('Discord username copied to clipboard: yoichi_2377');
+      }).catch(function() {
+        alert('Discord username: yoichi_2377');
+      });
+    });
+    
+    // Initialize the app
+    document.addEventListener('DOMContentLoaded', function() {
+      createSakura();
+      animateYoichi();
+      
+      document.getElementById('calculate').addEventListener('click', function() {
+        const totalBill = parseFloat(document.getElementById('total').value);
+        const tipPercentage = parseFloat(document.getElementById('tip').value);
+        const numberOfPeople = parseInt(document.getElementById('people').value);
+        
+        if (isNaN(totalBill) || isNaN(tipPercentage) || isNaN(numberOfPeople) || numberOfPeople < 1) {
+          alert('Please enter valid values');
+          return;
+        }
+        
+        const amountPerPerson = (totalBill * (1 + tipPercentage / 100)) / numberOfPeople;
+        
+        document.getElementById('amount').textContent = `£${amountPerPerson.toFixed(2)}`;
+        document.getElementById('result').classList.add('show');
+      });
+    });
+  </script>
+</body>
+</html>
